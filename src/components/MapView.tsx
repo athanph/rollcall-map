@@ -34,7 +34,9 @@ const MapView = () => {
 
   const [center, setCenter] = useState<{ lat: number; lng: number }>();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [newMarker, setNewMarker] = useState<Location>();
+  const [newMarker, setNewMarker] = useState<google.maps.LatLngLiteral | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -58,46 +60,54 @@ const MapView = () => {
     }
   }, []);
 
-  const handleDialogConfirm = () => {
-    setLocations([...locations, newMarker as Location]);
-    setIsDialogOpen(false);
-    setNewMarker(undefined);
-  };
-
-  const handleDialogCancel = () => {
-    setIsDialogOpen(false);
-    setNewMarker(undefined);
-  };
-
   // Handle map click event
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
-      const newMarker: Location = {
+      setNewMarker({
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
+      });
+      setIsDialogOpen(true);
+    }
+  }, []);
+
+  const handleDialogCancel = () => {
+    setIsDialogOpen(false);
+    setNewMarker(null);
+  };
+
+  const handleDialogConfirm = () => {
+    const newLocation: Location = {
+      ...(newMarker as google.maps.LatLngLiteral),
         address: "",
         name: "",
       };
 
       // Reverse geocoding
+    try {
       const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ location: event.latLng }, (results, status) => {
+      geocoder.geocode({ location: newMarker }, (results, status) => {
         // If geocoding is successful, update marker details
         if (status === "OK" && results?.[0]) {
           const selectedLocation = results[0];
-          newMarker.name =
+          newLocation.name =
             selectedLocation.address_components?.[0]?.short_name || null;
-          newMarker.address = selectedLocation.formatted_address;
+          newLocation.address = selectedLocation.formatted_address;
 
           // Add new marker
-          setNewMarker(newMarker);
+          setLocations([...locations, newLocation]);
           setIsDialogOpen(true);
         } else {
           console.error("Geocoding failed:", status);
         }
       });
+
+      setIsDialogOpen(false);
+      setNewMarker(null);
+    } catch (error) {
+      console.error(error);
     }
-  }, []);
+  };
 
   if (loadError) return <div>Error loading map</div>;
   if (!isLoaded || !center) return <div>Loading Map...</div>;
