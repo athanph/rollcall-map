@@ -7,14 +7,8 @@ import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import ConfirmDialog from "./ConfirmDialog";
 import MapMarker from "./MapMarker";
 
+import { type Location, useLocationContext } from "../context/LocationContext";
 import { showSuccessToast, showErrorToast } from "../utils/toast";
-
-interface Location {
-  lat: number;
-  lng: number;
-  address: string;
-  name: string | null;
-}
 
 const mapContainerStyle = {
   width: "100%",
@@ -28,12 +22,14 @@ const defaultCenter = {
 };
 
 const MapView = () => {
+  const { state, dispatch } = useLocationContext();
+  const { locations } = state;
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
   });
 
-  const [center, setCenter] = useState<{ lat: number; lng: number }>();
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>();
   const [newMarker, setNewMarker] = useState<google.maps.LatLngLiteral | null>(
     null
   );
@@ -95,7 +91,7 @@ const MapView = () => {
           newLocation.address = selectedLocation.formatted_address;
 
           // Add new marker
-          setLocations([...locations, newLocation]);
+          dispatch({ type: "ADD_LOCATION", location: newLocation });
           showSuccessToast("Location added successfully");
         } else {
           console.error("Geocoding failed:", status);

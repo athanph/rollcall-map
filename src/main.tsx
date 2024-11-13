@@ -4,9 +4,12 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 
 import App from "./App.tsx";
+import LocationProvider from "./components/LocationProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <LocationProvider>
+      <App />
+    </LocationProvider>
   </StrictMode>
 );
