@@ -1,6 +1,4 @@
 // TODO: Calculate distance to location
-// TODO: Add error state when geocoding fails
-// TODO: Show toast notification when location is added and when there is an error
 // TODO: Add loading state animation when map is loading
 
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +6,8 @@ import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 
 import ConfirmDialog from "./ConfirmDialog";
 import MapMarker from "./MapMarker";
+
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 interface Location {
   lat: number;
@@ -79,11 +79,11 @@ const MapView = () => {
   const handleDialogConfirm = () => {
     const newLocation: Location = {
       ...(newMarker as google.maps.LatLngLiteral),
-        address: "",
-        name: "",
-      };
+      address: "",
+      name: "",
+    };
 
-      // Reverse geocoding
+    // Reverse geocoding
     try {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: newMarker }, (results, status) => {
@@ -96,9 +96,10 @@ const MapView = () => {
 
           // Add new marker
           setLocations([...locations, newLocation]);
-          setIsDialogOpen(true);
+          showSuccessToast("Location added successfully");
         } else {
           console.error("Geocoding failed:", status);
+          showErrorToast("Error adding location. Please try again.");
         }
       });
 
@@ -106,6 +107,7 @@ const MapView = () => {
       setNewMarker(null);
     } catch (error) {
       console.error(error);
+      showErrorToast("Error adding location. Please try again.");
     }
   };
 
