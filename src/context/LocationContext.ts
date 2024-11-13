@@ -5,6 +5,7 @@ export interface Location {
   lng: number;
   address: string;
   name: string | null;
+  distance: number;
 }
 
 export interface State {

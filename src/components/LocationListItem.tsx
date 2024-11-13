@@ -15,9 +15,12 @@ const LocationListItem = ({
         {location.name || "Unnamed Location"}
       </div>
       <div className="text-xs ">{location.address}</div>
+      <div className="text-xs text-green-700">
+        {location.distance.toFixed(2)} km away
+      </div>
       <button
         onClick={() => handleDelete(index)}
-        className="text-red-500 mt-2 hover:text-red-700 text-xs">
+        className="mt-2 text-red-500 hover:text-red-700 text-xs">
         Delete
       </button>
     </li>

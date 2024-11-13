@@ -1,4 +1,3 @@
-// TODO: Calculate distance to location
 // TODO: Add loading state animation when map is loading
 
 import { useCallback, useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import MapMarker from "./MapMarker";
 
 import { type Location, useLocationContext } from "../context/LocationContext";
 import { showSuccessToast, showErrorToast } from "../utils/toast";
+import { calculateDistance } from "../utils/helpers";
 
 const mapContainerStyle = {
   width: "100%",
@@ -77,6 +77,7 @@ const MapView = () => {
       ...(newMarker as google.maps.LatLngLiteral),
       address: "",
       name: "",
+      distance: 0,
     };
 
     // Reverse geocoding
@@ -89,6 +90,12 @@ const MapView = () => {
           newLocation.name =
             selectedLocation.address_components?.[0]?.short_name || null;
           newLocation.address = selectedLocation.formatted_address;
+          newLocation.distance = calculateDistance(
+            center?.lat || 0,
+            center?.lng || 0,
+            newLocation.lat,
+            newLocation.lng
+          );
 
           // Add new marker
           dispatch({ type: "ADD_LOCATION", location: newLocation });
