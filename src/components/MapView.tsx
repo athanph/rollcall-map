@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 
 import ConfirmDialog from "./ConfirmDialog";
+import MapMarker from "./MapMarker";
 
 interface Location {
   lat: number;
@@ -112,7 +113,9 @@ const MapView = () => {
           zoomControl: true,
         }}
         onClick={handleMapClick}>
-        {/* Location markers here */}
+        {locations.map((location, index) => (
+          <MapMarker key={index} position={location} />
+        ))}
       </GoogleMap>
       <ConfirmDialog
         isOpen={isDialogOpen}
