@@ -1,8 +1,13 @@
+import Container from "./components/Container";
+import Main from "./components/Main";
+import Sidebar from "./components/Sidebar";
+
 const App = () => {
   return (
-    <div className="App flex h-screen w-full items-center justify-center">
-      Roll Call Map
-    </div>
+    <Container>
+      <Sidebar />
+      <Main />
+    </Container>
   );
 };
 
