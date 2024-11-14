@@ -10,6 +10,7 @@ export interface Location {
 
 export interface State {
   locations: Location[];
+  sidebarOpen: boolean;
 }
 
 interface LocationContextType {
@@ -20,11 +21,13 @@ interface LocationContextType {
 // Map Location Actions
 type Action =
   | { type: "ADD_LOCATION"; location: Location }
-  | { type: "DELETE_LOCATION"; index: number };
+  | { type: "DELETE_LOCATION"; index: number }
+  | { type: "TOGGLE_SIDEBAR" };
 
 // Map Location Initial State
 export const initialState: State = {
   locations: [],
+  sidebarOpen: true,
 };
 
 // Map Location Reducer
@@ -37,6 +40,8 @@ export const locationReducer = (state: State, action: Action): State => {
         ...state,
         locations: state.locations.filter((_, i) => i !== action.index),
       };
+    case "TOGGLE_SIDEBAR":
+      return { ...state, sidebarOpen: !state.sidebarOpen };
     default:
       return state;
   }
