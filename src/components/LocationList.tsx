@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import ConfirmDialog from "./ConfirmDialog";
 import LocationListItem from "./LocationListItem";
@@ -30,22 +32,35 @@ const LocationList = () => {
     setSelectedIndex(null);
   };
 
+  const rowRenderer = ({ index }: { index: number }) => {
+    const location = locations[index];
+    return (
+      <LocationListItem
+        key={index}
+        location={location}
+        index={index}
+        handleDelete={handleDelete}
+      />
+    );
+  };
+
   if (locations.length === 0) {
     return <div>You have not added any locations yet.</div>;
   }
 
   return (
     <>
-      <ul className="space-y-4">
-        {locations.map((location, index) => (
-          <LocationListItem
-            key={index}
-            location={location}
-            index={index}
-            handleDelete={handleDelete}
-          />
-        ))}
-      </ul>
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            height={height}
+            width={width}
+            itemCount={locations.length}
+            itemSize={116}>
+            {rowRenderer}
+          </List>
+        )}
+      </AutoSizer>
 
       <ConfirmDialog
         isOpen={isDialogOpen}

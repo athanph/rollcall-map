@@ -6,7 +6,7 @@ const Sidebar = () => {
   const { locations } = state;
 
   return (
-    <div className="p-4 w-[250px]">
+    <div className="flex flex-col p-4 w-[250px]">
       <div className="flex gap-2 items-center mb-4">
         <img src="/rollcall-icon.png" alt="Rollcall" className="w-6" />
         <h2 className="text-lg font-semibold">
@@ -14,7 +14,9 @@ const Sidebar = () => {
         </h2>
       </div>
 
-      <LocationList />
+      <div className="flex-1">
+        <LocationList />
+      </div>
     </div>
   );
 };
