@@ -6,7 +6,11 @@ import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import ConfirmDialog from "./ConfirmDialog";
 import MapMarker from "./MapMarker";
 
-import { type Location, useLocationContext } from "../context/LocationContext";
+import {
+  type LatLngLiteral,
+  type Location,
+  useLocationContext,
+} from "../context/LocationContext";
 import { showSuccessToast, showErrorToast } from "../utils/toast";
 import { calculateDistance } from "../utils/helpers";
 import { useDeviceType } from "../hooks/useDevice";
@@ -29,12 +33,11 @@ const MapView = () => {
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
+    libraries: ["geometry", "places"],
   });
 
-  const [center, setCenter] = useState<google.maps.LatLngLiteral>();
-  const [newMarker, setNewMarker] = useState<google.maps.LatLngLiteral | null>(
-    null
-  );
+  const [center, setCenter] = useState<LatLngLiteral>();
+  const [newMarker, setNewMarker] = useState<LatLngLiteral | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -47,9 +50,14 @@ const MapView = () => {
             lng: position.coords.longitude,
           });
         },
-        () => {
-          console.error("Geolocation permission denied or unavailable.");
+        (error) => {
+          console.error("Geolocation error:", error.message);
           setCenter(defaultCenter);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
         }
       );
     } else {
@@ -76,7 +84,7 @@ const MapView = () => {
 
   const handleDialogConfirm = () => {
     const newLocation: Location = {
-      ...(newMarker as google.maps.LatLngLiteral),
+      ...(newMarker as LatLngLiteral),
       address: "",
       name: "",
       distance: 0,
@@ -85,18 +93,16 @@ const MapView = () => {
     // Reverse geocoding
     try {
       const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ location: newMarker }, (results, status) => {
+      geocoder.geocode({ location: newMarker }, async (results, status) => {
         // If geocoding is successful, update marker details
         if (status === "OK" && results?.[0]) {
           const selectedLocation = results[0];
           newLocation.name =
             selectedLocation.address_components?.[0]?.short_name || null;
           newLocation.address = selectedLocation.formatted_address;
-          newLocation.distance = calculateDistance(
-            center?.lat || 0,
-            center?.lng || 0,
-            newLocation.lat,
-            newLocation.lng
+          newLocation.distance = await calculateDistance(
+            center as LatLngLiteral,
+            newMarker as LatLngLiteral
           );
 
           // Add new marker

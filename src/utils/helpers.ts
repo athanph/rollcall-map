@@ -1,21 +1,28 @@
-// Calculate and return distance between two points in km
-export const calculateDistance = (
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number
-) => {
-  const toRadians = (degree: number) => (degree * Math.PI) / 180;
-  const R = 6371; // Radius of Earth in km
-  const dLat = toRadians(lat2 - lat1);
-  const dLng = toRadians(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+import type { LatLngLiteral } from "../context/LocationContext";
 
-  return R * c; // Distance in km
+// Calculate and return road distance between two points in km
+// Using Google Maps Distance Matrix Service
+export const calculateDistance = (
+  marker1: LatLngLiteral,
+  marker2: LatLngLiteral
+): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    const service = new google.maps.DistanceMatrixService();
+
+    service.getDistanceMatrix(
+      {
+        origins: [{ lat: marker1.lat, lng: marker1.lng }],
+        destinations: [{ lat: marker2.lat, lng: marker2.lng }],
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === "OK" && response) {
+          const distance = response.rows[0].elements[0].distance.value; // distance in meters
+          resolve(distance / 1000);
+        } else {
+          reject(new Error("Failed to calculate road distance"));
+        }
+      }
+    );
+  });
 };
