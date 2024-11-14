@@ -53,6 +53,7 @@ const LocationList = () => {
       <AutoSizer>
         {({ height, width }) => (
           <List
+            innerElementType="ul"
             height={height}
             width={width}
             itemCount={locations.length}

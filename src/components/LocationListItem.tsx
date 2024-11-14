@@ -10,7 +10,7 @@ const LocationListItem = ({
   handleDelete: (index: number) => void;
 }) => {
   return (
-    <div className="mb-2 p-3 rounded-md shadow-md bg-gray-100 hover:bg-gray-200 text-gray-600">
+    <li className="mb-2 p-3 rounded-md shadow-md bg-gray-100 hover:bg-gray-200 text-gray-600">
       <div className="text-sm font-medium">
         {location.name || "Unnamed Location"}
       </div>
@@ -23,7 +23,7 @@ const LocationListItem = ({
         className="mt-2 text-red-500 hover:text-red-700 text-xs">
         Delete
       </button>
-    </div>
+    </li>
   );
 };
 
