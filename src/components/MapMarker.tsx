@@ -1,22 +1,27 @@
-import { Marker } from "@react-google-maps/api";
+import { MarkerF } from "@react-google-maps/api";
+
+import type { LatLngLiteral } from "../context/LocationContext";
 
 interface MapMarkerProps {
-  position: google.maps.LatLngLiteral;
+  position: LatLngLiteral;
   onClick?: () => void;
+  icon?: google.maps.Icon;
+  title?: string;
 }
 
-const MapMarker = ({ position, onClick }: MapMarkerProps) => {
+const MapMarker = ({ position, onClick, icon, title }: MapMarkerProps) => {
   return (
-    <Marker
+    <MarkerF
       position={position}
-      icon={{
-        url:
-          "/rollcall-marker.png" ||
-          "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-        scaledSize: new window.google.maps.Size(50, 50),
-      }}
+      icon={
+        icon || {
+          url: "/rollcall-marker.png",
+          scaledSize: new window.google.maps.Size(50, 50),
+        }
+      }
       animation={google.maps.Animation.DROP}
       onClick={onClick}
+      title={title}
     />
   );
 };

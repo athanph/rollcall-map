@@ -1,5 +1,7 @@
 import { createContext, useContext } from "react";
 
+export type LatLngLiteral = google.maps.LatLngLiteral;
+
 export interface Location {
   lat: number;
   lng: number;

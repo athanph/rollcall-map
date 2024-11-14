@@ -130,9 +130,26 @@ const MapView = () => {
           zoomControl: true,
         }}
         onClick={handleMapClick}>
+        {/* User selected markers */}
         {locations.map((location, index) => (
-          <MapMarker key={index} position={location} />
+          <MapMarker
+            key={index}
+            position={{ lat: location.lat, lng: location.lng }}
+            title={location.name || location.address}
+          />
         ))}
+
+        {/* "You are here" Marker */}
+        {center && (
+          <MapMarker
+            position={center}
+            icon={{
+              url: "/marker-user.png",
+              scaledSize: new google.maps.Size(50, 75),
+            }}
+            title="You're here"
+          />
+        )}
       </GoogleMap>
       <ConfirmDialog
         isOpen={isDialogOpen}
