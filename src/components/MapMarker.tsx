@@ -7,9 +7,16 @@ interface MapMarkerProps {
   onClick?: () => void;
   icon?: google.maps.Icon;
   title?: string;
+  clusterer?: any;
 }
 
-const MapMarker = ({ position, onClick, icon, title }: MapMarkerProps) => {
+const MapMarker = ({
+  position,
+  onClick,
+  icon,
+  title,
+  clusterer,
+}: MapMarkerProps) => {
   return (
     <MarkerF
       position={position}
@@ -22,6 +29,7 @@ const MapMarker = ({ position, onClick, icon, title }: MapMarkerProps) => {
       animation={google.maps.Animation.DROP}
       onClick={onClick}
       title={title}
+      clusterer={clusterer}
     />
   );
 };

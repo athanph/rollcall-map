@@ -1,7 +1,11 @@
 // TODO: Add loading state animation when map is loading
 
 import { useCallback, useEffect, useState } from "react";
-import { GoogleMap, useLoadScript } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useLoadScript,
+  MarkerClustererF,
+} from "@react-google-maps/api";
 
 import ConfirmDialog from "./ConfirmDialog";
 import MapMarker from "./MapMarker";
@@ -65,6 +69,13 @@ const MapView = () => {
       setCenter(defaultCenter);
     }
   }, []);
+
+  const clustererOptions = {
+    imagePath:
+      "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+    maxZoom: 20,
+    minimumClusterSize: 2,
+  };
 
   // Handle map click event
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
@@ -137,13 +148,22 @@ const MapView = () => {
         }}
         onClick={handleMapClick}>
         {/* User selected markers */}
-        {filteredLocations.map((location, index) => (
-          <MapMarker
-            key={index}
-            position={{ lat: location.lat, lng: location.lng }}
-            title={location.name || location.address}
-          />
-        ))}
+        {filteredLocations.length > 0 && (
+          <MarkerClustererF options={clustererOptions}>
+            {(clusterer) => (
+              <>
+                {filteredLocations.map((location, index) => (
+                  <MapMarker
+                    key={index}
+                    position={{ lat: location.lat, lng: location.lng }}
+                    title={location.name || location.address}
+                    clusterer={clusterer}
+                  />
+                ))}
+              </>
+            )}
+          </MarkerClustererF>
+        )}
 
         {/* "You are here" Marker */}
         {center && (
