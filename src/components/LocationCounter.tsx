@@ -6,8 +6,8 @@ const LocationCounter = () => {
   const { locations } = state;
 
   return (
-    <div className="absolute top-3 left-3 lg:relative lg:top-0 lg:left-0 lg:right-0 flex lg:flex-col items-center gap-2 lg:mt-6">
-      <h2 className="text-md font-semibold flex lg:flex-col items-center gap-1">
+    <div className="lg:mt-6 lg:order-3">
+      <h2 className="font-semibold flex lg:flex-col items-center gap-1">
         <img
           src="/rollcall-icon.png"
           alt="Rollcall"

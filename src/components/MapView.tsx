@@ -29,7 +29,7 @@ const defaultCenter = {
 const MapView = () => {
   const { isDesktop } = useDeviceType();
   const { state, dispatch } = useLocationContext();
-  const { locations } = state;
+  const { filteredLocations } = state;
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
@@ -137,7 +137,7 @@ const MapView = () => {
         }}
         onClick={handleMapClick}>
         {/* User selected markers */}
-        {locations.map((location, index) => (
+        {filteredLocations.map((location, index) => (
           <MapMarker
             key={index}
             position={{ lat: location.lat, lng: location.lng }}

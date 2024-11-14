@@ -12,7 +12,7 @@ import { useDeviceType } from "../hooks/useDevice";
 const LocationList = () => {
   const { isDesktop } = useDeviceType();
   const { state, dispatch } = useLocationContext();
-  const { locations } = state;
+  const { locations, filteredLocations } = state;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -35,7 +35,7 @@ const LocationList = () => {
   };
 
   const rowRenderer = ({ index }: { index: number }) => {
-    const location = locations[index];
+    const location = filteredLocations[index];
     return (
       <LocationListItem
         key={index}
@@ -51,13 +51,20 @@ const LocationList = () => {
       <div className="flex gap-2 items-center mb-4">
         <img src="/rollcall-icon.png" alt="Rollcall" className="w-6" />
         <h2 className="text-md font-semibold">
-          Your Locations {locations.length > 0 && `(${locations.length})`}
+          <span className=" mr-1">Your Locations</span>
+          {filteredLocations.length > 0 && `(${filteredLocations.length})`}
         </h2>
       </div>
 
-      {locations.length === 0 ? (
+      {locations.length === 0 && (
         <div>You have not added any locations yet.</div>
-      ) : (
+      )}
+
+      {locations.length > 0 && filteredLocations.length === 0 && (
+        <div>No locations found matching your search.</div>
+      )}
+
+      {filteredLocations.length > 0 && (
         <>
           <div className="flex-1">
             <AutoSizer>
@@ -66,7 +73,7 @@ const LocationList = () => {
                   innerElementType="ul"
                   height={height}
                   width={width}
-                  itemCount={locations.length}
+                  itemCount={filteredLocations.length}
                   itemSize={116}>
                   {rowRenderer}
                 </List>

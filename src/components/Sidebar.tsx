@@ -6,6 +6,7 @@ import {
 
 import LocationList from "./LocationList";
 import LocationCounter from "./LocationCounter";
+import SearchFilter from "./SearchFilter";
 
 import { cn } from "../utils/cn";
 import { useLocationContext } from "../context/LocationContext";
@@ -71,7 +72,7 @@ const Sidebar = () => {
             !sidebarOpen,
 
           // Sidebar closed and not hovered
-          "w-full lg:w-12 items-center flex-col lg:bg-transparent lg:text-white lg:before:bg-gray-900 lg:before:opacity-50":
+          "w-full lg:w-12 items-center lg:flex-col justify-between lg:justify-normal lg:bg-transparent lg:text-white lg:before:bg-gray-900 lg:before:opacity-50":
             !sidebarOpen && !isSidebarHovered,
 
           // Sidebar closed and hovered
@@ -81,8 +82,9 @@ const Sidebar = () => {
       )}>
       {/* Sidebar Toggle Button*/}
       <div
-        className={cn("flex w-full justify-end", {
-          "lg:justify-center": !sidebarOpen && !isSidebarHovered,
+        className={cn("flex justify-end", {
+          "lg:justify-center  order-3 lg:order-1":
+            !sidebarOpen && !isSidebarHovered,
         })}>
         <button
           className={cn("transition-colors duration-300", {
@@ -106,6 +108,9 @@ const Sidebar = () => {
           )}
         </button>
       </div>
+
+      {/* Search Filter */}
+      <SearchFilter canDisplay={sidebarOpen || isSidebarHovered} />
 
       {/* Location List */}
       {sidebarOpen || isSidebarHovered ? (
