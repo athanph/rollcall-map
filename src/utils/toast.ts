@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 
-export const showSuccessToast = (message: string) => {
+export const showSuccessToast = (message: string, isDesktop: boolean) => {
   toast.success(message, {
-    position: "top-right",
+    position: isDesktop ? "top-right" : "bottom-right",
     autoClose: 3000,
     hideProgressBar: true,
     closeOnClick: true,
@@ -12,9 +12,9 @@ export const showSuccessToast = (message: string) => {
   });
 };
 
-export const showErrorToast = (message: string) => {
+export const showErrorToast = (message: string, isDesktop: boolean) => {
   toast.error(message, {
-    position: "top-right",
+    position: isDesktop ? "top-right" : "bottom-right",
     autoClose: 3000,
     hideProgressBar: true,
     closeOnClick: true,

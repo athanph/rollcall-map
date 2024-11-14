@@ -5,7 +5,7 @@ interface ContainerProps {
 }
 
 const Container = ({ children }: ContainerProps) => {
-  return <div className="flex h-screen">{children}</div>;
+  return <div className="flex flex-col lg:flex-row h-screen">{children}</div>;
 };
 
 export default Container;

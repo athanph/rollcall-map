@@ -22,7 +22,7 @@ interface LocationContextType {
 type Action =
   | { type: "ADD_LOCATION"; location: Location }
   | { type: "DELETE_LOCATION"; index: number }
-  | { type: "TOGGLE_SIDEBAR" };
+  | { type: "TOGGLE_SIDEBAR"; sidebarOpen?: boolean };
 
 // Map Location Initial State
 export const initialState: State = {
@@ -41,7 +41,10 @@ export const locationReducer = (state: State, action: Action): State => {
         locations: state.locations.filter((_, i) => i !== action.index),
       };
     case "TOGGLE_SIDEBAR":
-      return { ...state, sidebarOpen: !state.sidebarOpen };
+      return {
+        ...state,
+        sidebarOpen: action.sidebarOpen ?? !state.sidebarOpen,
+      };
     default:
       return state;
   }

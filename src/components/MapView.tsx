@@ -9,6 +9,7 @@ import MapMarker from "./MapMarker";
 import { type Location, useLocationContext } from "../context/LocationContext";
 import { showSuccessToast, showErrorToast } from "../utils/toast";
 import { calculateDistance } from "../utils/helpers";
+import { useDeviceType } from "../hooks/useDevice";
 
 const mapContainerStyle = {
   width: "100%",
@@ -22,6 +23,7 @@ const defaultCenter = {
 };
 
 const MapView = () => {
+  const { isDesktop } = useDeviceType();
   const { state, dispatch } = useLocationContext();
   const { locations } = state;
 
@@ -99,10 +101,10 @@ const MapView = () => {
 
           // Add new marker
           dispatch({ type: "ADD_LOCATION", location: newLocation });
-          showSuccessToast("Location added successfully");
+          showSuccessToast("Location added successfully", isDesktop);
         } else {
           console.error("Geocoding failed:", status);
-          showErrorToast("Error adding location. Please try again.");
+          showErrorToast("Error adding location. Please try again.", isDesktop);
         }
       });
 
@@ -110,7 +112,7 @@ const MapView = () => {
       setNewMarker(null);
     } catch (error) {
       console.error(error);
-      showErrorToast("Error adding location. Please try again.");
+      showErrorToast("Error adding location. Please try again.", isDesktop);
     }
   };
 

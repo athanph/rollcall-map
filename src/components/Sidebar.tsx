@@ -3,16 +3,21 @@ import {
   TbLayoutSidebarLeftCollapseFilled,
   TbLayoutSidebarRightCollapseFilled,
 } from "react-icons/tb";
-import { FaMapMarkerAlt } from "react-icons/fa";
 
-import { useLocationContext } from "../context/LocationContext";
 import LocationList from "./LocationList";
+import LocationCounter from "./LocationCounter";
 
 import { cn } from "../utils/cn";
+import { useLocationContext } from "../context/LocationContext";
+import { useHoverDevice } from "../hooks/useHoverDevice";
+import { useDeviceType } from "../hooks/useDevice";
 
 const Sidebar = () => {
+  const isHoverDevice = useHoverDevice();
+  const { isDesktop } = useDeviceType();
+
   const { state, dispatch } = useLocationContext();
-  const { locations, sidebarOpen } = state;
+  const { sidebarOpen } = state;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
@@ -21,9 +26,17 @@ const Sidebar = () => {
     dispatch({ type: "TOGGLE_SIDEBAR" });
   };
 
+  // Close sidebar on mobile
+  useEffect(() => {
+    if (!isDesktop) {
+      dispatch({ type: "TOGGLE_SIDEBAR", sidebarOpen: false });
+      setIsSidebarHovered(false);
+    }
+  }, [!isDesktop]);
+
+  // Delay showing content until sidebar is expanded
   useEffect(() => {
     if (sidebarOpen || isSidebarHovered) {
-      // Delay showing content until sidebar is expanded
       const timer = setTimeout(() => {
         setIsSidebarExpanded(true);
       }, 300);
@@ -33,35 +46,63 @@ const Sidebar = () => {
     }
   }, [sidebarOpen, isSidebarHovered]);
 
+  // Handle mouse events
+  // Only show hover state on devices with hover capabilities
+  const handleMouseEvents = isHoverDevice
+    ? {
+        onMouseEnter: () => !sidebarOpen && setIsSidebarHovered(true),
+        onMouseLeave: () => !sidebarOpen && setIsSidebarHovered(false),
+      }
+    : {};
+
   return (
     <div
-      onMouseEnter={() => !sidebarOpen && setIsSidebarHovered(true)}
-      onMouseLeave={() => !sidebarOpen && setIsSidebarHovered(false)}
-      className={cn("p-4 transition-all duration-300 z-10", {
-        "w-[250px] flex flex-col": sidebarOpen || isSidebarHovered,
-        "fixed top-0 left-0 h-full before:content-[''] before:absolute before:inset-0 before:z-[-1]":
-          !sidebarOpen,
-        "w-12 items-center text-white before:bg-gray-900  before:opacity-50":
-          !sidebarOpen && !isSidebarHovered,
-        "w-[250px] fixed top-0 left-0 h-full before:bg-white before:opacity-100 shadow-xl":
-          !sidebarOpen && isSidebarHovered,
-      })}>
+      data-sidebar-open={sidebarOpen}
+      {...handleMouseEvents}
+      className={cn(
+        "p-2 lg:p-4 bg-white shadow-xl transition-all duration-300 z-10 flex",
+        {
+          // Sidebar open or hovered
+          "fixed top-0 left-0 w-full h-full lg:w-[250px] flex-col":
+            sidebarOpen || isSidebarHovered,
+
+          // Sidebar closed
+          "fixed top-0 left-0 h-12 lg:h-full lg:before:content-[''] before:absolute before:inset-0 before:z-[-1]":
+            !sidebarOpen,
+
+          // Sidebar closed and not hovered
+          "w-full lg:w-12 items-center flex-col lg:bg-transparent lg:text-white lg:before:bg-gray-900 lg:before:opacity-50":
+            !sidebarOpen && !isSidebarHovered,
+
+          // Sidebar closed and hovered
+          "lg:w-[250px] fixed top-0 left-0 h-full lg:before:bg-white lg:before:opacity-100":
+            !sidebarOpen && isSidebarHovered,
+        }
+      )}>
       {/* Sidebar Toggle Button*/}
-      <div className="flex justify-end">
+      <div
+        className={cn("flex w-full justify-end", {
+          "lg:justify-center": !sidebarOpen && !isSidebarHovered,
+        })}>
         <button
           className={cn("transition-colors duration-300", {
-            "text-gray-500 hover:text-gray-700":
+            "text-gray-500  hover:text-gray-700":
               sidebarOpen || isSidebarHovered,
-            "text-white": !sidebarOpen && !isSidebarHovered,
+            "lg:text-white": !sidebarOpen && !isSidebarHovered,
           })}
           onClick={toggleSidebar}>
           {sidebarOpen ? (
             <TbLayoutSidebarLeftCollapseFilled
-              size={20}
-              title="Unpin Sidebar"
+              size={!isDesktop ? 32 : 24}
+              title="Collapse"
+              className="rotate-90 lg:rotate-0"
             />
           ) : (
-            <TbLayoutSidebarRightCollapseFilled size={20} title="Pin Sidebar" />
+            <TbLayoutSidebarRightCollapseFilled
+              size={!isDesktop ? 32 : 24}
+              title="Expand"
+              className="rotate-90 lg:rotate-0"
+            />
           )}
         </button>
       </div>
@@ -70,29 +111,16 @@ const Sidebar = () => {
       {sidebarOpen || isSidebarHovered ? (
         <div
           className={cn(
-            "flex flex-col h-full transition-opacity duration-300",
+            "flex flex-col h-full transition-opacity duration-300 mt-4",
             {
               "opacity-0 hidden": !isSidebarExpanded,
               "opacity-100 visible": isSidebarExpanded,
             }
           )}>
-          <div className="flex gap-2 items-center mb-4">
-            <img src="/rollcall-icon.png" alt="Rollcall" className="w-6" />
-            <h2 className="text-lg font-semibold">
-              Locations {locations.length > 0 && `(${locations.length})`}
-            </h2>
-          </div>
-          <div className="flex-1">
-            <LocationList />
-          </div>
+          <LocationList />
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-2 mt-6">
-          <FaMapMarkerAlt size={32} />
-          <span className="bg-red-500 text-xs rounded-full px-2 py-1 text-white">
-            {locations.length}
-          </span>
-        </div>
+        <LocationCounter />
       )}
     </div>
   );
