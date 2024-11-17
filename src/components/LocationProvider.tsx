@@ -12,9 +12,7 @@ const LocationProvider = ({ children }: { children: ReactNode }) => {
 
   // Initialize `filteredLocations` with all locations
   useEffect(() => {
-    if (state.locations.length > 0) {
-      dispatch({ type: "SET_FILTERED_LOCATIONS", locations: state.locations });
-    }
+    dispatch({ type: "SET_FILTERED_LOCATIONS", locations: state.locations });
   }, [state.locations]);
 
   return (
