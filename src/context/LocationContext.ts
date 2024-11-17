@@ -41,13 +41,9 @@ export const initialState: State = {
 export const locationReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_LOCATION":
-      return { ...state, locations: [...state.locations, action.location] };
+      return { ...state, locations: [action.location, ...state.locations] };
     case "UPDATE_LOCATIONS":
-      return {
-        ...state,
-        filteredLocations: action.locations,
-        locations: action.locations,
-      };
+      return { ...state, locations: action.locations };
     case "DELETE_LOCATION":
       return {
         ...state,
@@ -56,10 +52,7 @@ export const locationReducer = (state: State, action: Action): State => {
         ),
       };
     case "SET_FILTERED_LOCATIONS":
-      return {
-        ...state,
-        filteredLocations: action.locations,
-      };
+      return { ...state, filteredLocations: action.locations };
     case "TOGGLE_SIDEBAR":
       return {
         ...state,
