@@ -9,8 +9,10 @@ import LocationListItem from "./LocationListItem";
 import { useLocationContext } from "../context/LocationContext";
 import { showSuccessToast } from "../utils/toast";
 import { useDeviceType } from "../hooks/useDevice";
+import { useHoverDevice } from "../hooks/useHoverDevice";
 
 const LocationList = () => {
+  const isHoverDevice = useHoverDevice();
   const { isDesktop } = useDeviceType();
   const { state, dispatch } = useLocationContext();
   const { locations, filteredLocations } = state;
@@ -85,7 +87,7 @@ const LocationList = () => {
         key={location.id}
         location={location}
         isSelected={selectedLocationIds.includes(location.id)}
-        showCheckbox={selectedLocationIds.length > 0}
+        showCheckbox={isHoverDevice ? selectedLocationIds.length > 0 : true}
         onDelete={handleSingleDelete}
         onSelect={handleSelectLocation}
       />
@@ -102,7 +104,7 @@ const LocationList = () => {
         </h2>
       </div>
 
-      {selectedLocationIds.length > 0 && (
+      {!isHoverDevice || selectedLocationIds.length > 0 ? (
         <div className="mb-4 text-xs">
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2">
@@ -118,13 +120,14 @@ const LocationList = () => {
             </label>
             <button
               onClick={handleMultiDelete}
-              className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1">
+              className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1 disabled:opacity-50"
+              disabled={selectedLocationIds.length === 0}>
               <RiDeleteBin6Line /> ({selectedLocationIds.length})
               <span className="sr-only">Delete Selected Locations</span>
             </button>
           </div>
         </div>
-      )}
+      ) : null}
 
       {locations.length === 0 && (
         <div>You have not added any locations yet.</div>

@@ -49,7 +49,7 @@ const LocationListItem = ({
         </div>
         <button
           onClick={() => onDelete(location.id)}
-          className="hidden group-hover:block bg-white hover:bg-red-500 absolute top-1 right-1 p-1 rounded-full text-red-500 hover:text-white transition-all duration-300 text-xs">
+          className="lg:hidden group-hover:block bg-white hover:bg-red-500 absolute top-1 right-1 p-1 rounded-full text-red-500 hover:text-white transition-all duration-300 text-xs">
           <RiDeleteBin6Line />
           <span className="sr-only">Delete Location</span>
         </button>
