@@ -6,6 +6,7 @@ import {
   useLoadScript,
   MarkerClustererF,
 } from "@react-google-maps/api";
+import { v4 as uuidv4 } from "uuid";
 
 import ConfirmDialog from "./ConfirmDialog";
 import MapMarker from "./MapMarker";
@@ -96,6 +97,7 @@ const MapView = () => {
   const handleDialogConfirm = () => {
     const newLocation: Location = {
       ...(newMarker as LatLngLiteral),
+      id: uuidv4(),
       address: "",
       name: "",
       distance: 0,

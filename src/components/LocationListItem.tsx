@@ -5,16 +5,14 @@ import { cn } from "../utils/cn";
 
 interface LocationListItemProps {
   location: Location;
-  index: number;
   isSelected: boolean;
   showCheckbox: boolean;
-  onDelete: (index: number) => void;
-  onSelect: (index: number) => void;
+  onDelete: (locationId: string) => void;
+  onSelect: (locationId: string) => void;
 }
 
 const LocationListItem = ({
   location,
-  index,
   isSelected,
   showCheckbox,
   onDelete,
@@ -35,7 +33,7 @@ const LocationListItem = ({
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={() => onSelect(index)}
+          onChange={() => onSelect(location.id)}
           className="rounded bg-gray-500"
         />
       </div>
@@ -50,7 +48,7 @@ const LocationListItem = ({
           {location.distance.toFixed(2)} km away
         </div>
         <button
-          onClick={() => onDelete(index)}
+          onClick={() => onDelete(location.id)}
           className="hidden group-hover:block bg-white hover:bg-red-500 absolute top-1 right-1 p-1 rounded-full text-red-500 hover:text-white transition-all duration-300 text-xs">
           <RiDeleteBin6Line />
           <span className="sr-only">Delete Location</span>

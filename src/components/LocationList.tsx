@@ -16,29 +16,31 @@ const LocationList = () => {
   const { locations, filteredLocations } = state;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [selectedLocations, setSelectedLocations] = useState<number[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null); // Single location ID
+  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]); // Multiple location IDs
 
   // On click, select a single location to delete
-  const handleSelectLocation = (index: number) => {
-    setSelectedLocations((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+  const handleSelectLocation = (locationId: string) => {
+    setSelectedLocationIds((prev) =>
+      prev.includes(locationId)
+        ? prev.filter((id) => id !== locationId)
+        : [...prev, locationId]
     );
   };
 
   // On click, select all locations to delete
   const handleSelectAll = () => {
-    setSelectedLocations(
-      selectedLocations.length === filteredLocations.length
+    setSelectedLocationIds(
+      selectedLocationIds.length === filteredLocations.length
         ? []
-        : filteredLocations.map((_, index) => index)
+        : filteredLocations.map((location) => location.id)
     );
   };
 
   // Open the delete confirmation dialog for a single location
-  const handleSingleDelete = (index: number) => {
+  const handleSingleDelete = (locationId: string) => {
     setIsDialogOpen(true);
-    setSelectedIndex(index);
+    setSelectedId(locationId);
   };
 
   // Open the delete confirmation dialog for multiple locations
@@ -48,26 +50,23 @@ const LocationList = () => {
 
   // Delete a single location upon confirmation
   const handleSingleDeleteConfirm = () => {
-    if (selectedIndex !== null) {
-      dispatch({ type: "DELETE_LOCATION", index: selectedIndex });
+    if (selectedId !== null) {
+      dispatch({ type: "DELETE_LOCATION", locationId: selectedId });
     }
     setIsDialogOpen(false);
-    setSelectedIndex(null);
+    setSelectedId(null);
     showSuccessToast("Location deleted successfully", isDesktop);
   };
 
   // Delete multiple locations upon confirmation
   const handleMultiDeleteConfirm = () => {
-    // Sort indices in descending order to avoid shifting issues
-    const sortedIndices = [...selectedLocations].sort((a, b) => b - a);
-    sortedIndices.forEach((index) => {
-      console.log(index);
-      dispatch({ type: "DELETE_LOCATION", index });
+    selectedLocationIds.forEach((locationId) => {
+      dispatch({ type: "DELETE_LOCATION", locationId });
     });
     setIsDialogOpen(false);
-    setSelectedLocations([]);
+    setSelectedLocationIds([]);
     showSuccessToast(
-      `${selectedLocations.length} locations deleted`,
+      `${selectedLocationIds.length} locations deleted`,
       isDesktop
     );
   };
@@ -75,7 +74,7 @@ const LocationList = () => {
   // Close the delete confirmation dialog
   const handleDialogCancel = () => {
     setIsDialogOpen(false);
-    setSelectedIndex(null);
+    setSelectedId(null);
   };
 
   // Render the list of locations
@@ -83,11 +82,10 @@ const LocationList = () => {
     const location = filteredLocations[index];
     return (
       <LocationListItem
-        key={index}
+        key={location.id}
         location={location}
-        index={index}
-        isSelected={selectedLocations.includes(index)}
-        showCheckbox={selectedLocations.length > 0}
+        isSelected={selectedLocationIds.includes(location.id)}
+        showCheckbox={selectedLocationIds.length > 0}
         onDelete={handleSingleDelete}
         onSelect={handleSelectLocation}
       />
@@ -104,13 +102,15 @@ const LocationList = () => {
         </h2>
       </div>
 
-      {selectedLocations.length > 0 && (
+      {selectedLocationIds.length > 0 && (
         <div className="mb-4 text-xs">
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={selectedLocations.length === filteredLocations.length}
+                checked={
+                  selectedLocationIds.length === filteredLocations.length
+                }
                 onChange={handleSelectAll}
                 className="rounded"
               />
@@ -119,7 +119,7 @@ const LocationList = () => {
             <button
               onClick={handleMultiDelete}
               className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1">
-              <RiDeleteBin6Line /> ({selectedLocations.length})
+              <RiDeleteBin6Line /> ({selectedLocationIds.length})
               <span className="sr-only">Delete Selected Locations</span>
             </button>
           </div>
@@ -154,12 +154,12 @@ const LocationList = () => {
           <ConfirmDialog
             isOpen={isDialogOpen}
             message={`Are you sure you want to delete ${
-              selectedLocations.length > 1
-                ? `these ${selectedLocations.length} locations`
+              selectedLocationIds.length > 1
+                ? `these ${selectedLocationIds.length} locations`
                 : "this location"
             }?`}
             onConfirm={
-              selectedLocations.length > 0
+              selectedLocationIds.length > 0
                 ? handleMultiDeleteConfirm
                 : handleSingleDeleteConfirm
             }

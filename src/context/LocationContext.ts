@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 export type LatLngLiteral = google.maps.LatLngLiteral;
 
 export interface Location {
+  id: string;
   lat: number;
   lng: number;
   address: string;
@@ -24,7 +25,7 @@ interface LocationContextType {
 // Map Location Actions
 type Action =
   | { type: "ADD_LOCATION"; location: Location }
-  | { type: "DELETE_LOCATION"; index: number }
+  | { type: "DELETE_LOCATION"; locationId: string }
   | { type: "SET_FILTERED_LOCATIONS"; locations: Location[] }
   | { type: "TOGGLE_SIDEBAR"; sidebarOpen?: boolean };
 
@@ -43,7 +44,9 @@ export const locationReducer = (state: State, action: Action): State => {
     case "DELETE_LOCATION":
       return {
         ...state,
-        locations: state.locations.filter((_, i) => i !== action.index),
+        locations: state.locations.filter(
+          (location) => location.id !== action.locationId
+        ),
       };
     case "SET_FILTERED_LOCATIONS":
       return {
