@@ -1,15 +1,17 @@
 # Roll Call Map Location Application
 
-This project is a responsive, interactive map application that enables users to add, view, and manage locations on a map. The project utilizes Google Maps API for map and geocoding services and offers a virtualized list for efficient rendering of location data. It is built with React, TypeScript, and Tailwind CSS for styling, and includes a responsive sidebar for location management.
+This project is a responsive, interactive map application that enables users to manage locations on a map. The project utilizes Google Maps API for map and geocoding services and offers a virtualized list for efficient rendering of location data. Built with React, TypeScript, and Tailwind CSS for styling.
 
-## ImplementedFeatures
+## Implemented Features
 
 ### Map Features
 
 - Responsive Google Maps view with interactive panning and zooming
 - Location selection via click events on the map
+- Reverse geocoding for the selected location coordinates to retrieve place name and address
 - Custom marker icons with drop-in animation when a new location is added
 - Clustering for multiple markers
+- Draggable user's 'You are here' marker to match actual location on map
 
 ### Sidebar Panel
 
@@ -22,8 +24,8 @@ This project is a responsive, interactive map application that enables users to 
 
 ### Location Management
 
+- Multiple selection and deletion of locations
 - Option to confirm adding and deleting a location, with an error and success feedback using toasts
-- Reverse geocoding for the selected location coordinates to retrieve place name and address
 
 ### Technical Features
 
