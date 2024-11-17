@@ -8,6 +8,8 @@ interface MapMarkerProps {
   icon?: google.maps.Icon;
   title?: string;
   clusterer?: any;
+  draggable?: boolean;
+  onDragEnd?: (event: google.maps.MapMouseEvent) => void;
 }
 
 const MapMarker = ({
@@ -16,6 +18,8 @@ const MapMarker = ({
   icon,
   title,
   clusterer,
+  draggable,
+  onDragEnd,
 }: MapMarkerProps) => {
   return (
     <MarkerF
@@ -30,6 +34,8 @@ const MapMarker = ({
       onClick={onClick}
       title={title}
       clusterer={clusterer}
+      draggable={draggable}
+      onDragEnd={onDragEnd}
     />
   );
 };

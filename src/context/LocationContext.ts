@@ -25,6 +25,7 @@ interface LocationContextType {
 // Map Location Actions
 type Action =
   | { type: "ADD_LOCATION"; location: Location }
+  | { type: "UPDATE_LOCATIONS"; locations: Location[] }
   | { type: "DELETE_LOCATION"; locationId: string }
   | { type: "SET_FILTERED_LOCATIONS"; locations: Location[] }
   | { type: "TOGGLE_SIDEBAR"; sidebarOpen?: boolean };
@@ -41,6 +42,12 @@ export const locationReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_LOCATION":
       return { ...state, locations: [...state.locations, action.location] };
+    case "UPDATE_LOCATIONS":
+      return {
+        ...state,
+        filteredLocations: action.locations,
+        locations: action.locations,
+      };
     case "DELETE_LOCATION":
       return {
         ...state,

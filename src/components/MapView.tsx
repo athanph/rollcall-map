@@ -89,11 +89,13 @@ const MapView = () => {
     }
   }, []);
 
+  // Cancel the Add Location dialog
   const handleDialogCancel = () => {
     setIsDialogOpen(false);
     setNewMarker(null);
   };
 
+  // Confirm the dialog
   const handleDialogConfirm = () => {
     const newLocation: Location = {
       ...(newMarker as LatLngLiteral),
@@ -134,6 +136,35 @@ const MapView = () => {
       showErrorToast("Error adding location. Please try again.", isDesktop);
     }
   };
+
+  // Handle "You Are Here" marker drag end to update `center` and
+  // the existing locations' distances
+  const handleMarkerDragEnd = useCallback(
+    async (event: google.maps.MapMouseEvent) => {
+      if (event.latLng) {
+        const newCenter = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng(),
+        };
+        setCenter(newCenter);
+
+        // Recalculate distances for all locations
+        if (filteredLocations.length > 0) {
+          const updatedLocations = await Promise.all(
+            filteredLocations.map(async (location) => ({
+              ...location,
+              distance: await calculateDistance(newCenter, {
+                lat: location.lat,
+                lng: location.lng,
+              }),
+            }))
+          );
+          dispatch({ type: "UPDATE_LOCATIONS", locations: updatedLocations });
+        }
+      }
+    },
+    [filteredLocations, dispatch]
+  );
 
   if (loadError) return <div>Error loading map</div>;
   if (!isLoaded || !center) return <div>Loading Map...</div>;
@@ -176,6 +207,8 @@ const MapView = () => {
               scaledSize: new google.maps.Size(50, 75),
             }}
             title="You're here"
+            draggable={true}
+            onDragEnd={handleMarkerDragEnd}
           />
         )}
       </GoogleMap>
