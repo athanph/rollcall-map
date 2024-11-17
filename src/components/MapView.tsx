@@ -171,9 +171,9 @@ const MapView = () => {
           <MarkerClustererF options={clustererOptions}>
             {(clusterer) => (
               <>
-                {filteredLocations.map((location, index) => (
+                {filteredLocations.map((location) => (
                   <MapMarker
-                    key={index}
+                    key={location.id}
                     position={{ lat: location.lat, lng: location.lng }}
                     title={location.name || location.address}
                     clusterer={clusterer}
