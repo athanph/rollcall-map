@@ -1,11 +1,5 @@
-// TODO: Add loading state animation when map is loading
-
 import { useCallback, useEffect, useState } from "react";
-import {
-  GoogleMap,
-  useLoadScript,
-  MarkerClustererF,
-} from "@react-google-maps/api";
+import { GoogleMap, MarkerClustererF } from "@react-google-maps/api";
 import { v4 as uuidv4 } from "uuid";
 
 import ConfirmDialog from "./ConfirmDialog";
@@ -35,11 +29,6 @@ const MapView = () => {
   const { isDesktop } = useDeviceType();
   const { state, dispatch } = useLocationContext();
   const { filteredLocations } = state;
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: ["geometry", "places"],
-  });
 
   const [center, setCenter] = useState<LatLngLiteral>();
   const [newMarker, setNewMarker] = useState<LatLngLiteral | null>(null);
@@ -165,9 +154,6 @@ const MapView = () => {
     },
     [filteredLocations, dispatch]
   );
-
-  if (loadError) return <div>Error loading map</div>;
-  if (!isLoaded || !center) return <div>Loading Map...</div>;
 
   return (
     <>
