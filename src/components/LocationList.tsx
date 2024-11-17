@@ -52,11 +52,23 @@ const LocationList = () => {
 
   // Delete a single location upon confirmation
   const handleSingleDeleteConfirm = () => {
-    if (selectedId !== null) {
-      dispatch({ type: "DELETE_LOCATION", locationId: selectedId });
-    }
+    // If selectedId is null, return early
+    if (selectedId === null) return;
+
+    // Else, delete the location
+    dispatch({ type: "DELETE_LOCATION", locationId: selectedId });
+
+    // Reset the state
     setIsDialogOpen(false);
     setSelectedId(null);
+
+    // If deleted `selectedId` is included in `selectedLocationIds`, remove it
+    // Use Case: If the user deletes only a single location after selecting multiple locations to delete
+    if (selectedLocationIds.includes(selectedId as string)) {
+      setSelectedLocationIds((prev) => prev.filter((id) => id !== selectedId));
+    }
+
+    // Show success toast
     showSuccessToast("Location deleted successfully", isDesktop);
   };
 
@@ -157,12 +169,12 @@ const LocationList = () => {
           <ConfirmDialog
             isOpen={isDialogOpen}
             message={`Are you sure you want to delete ${
-              selectedLocationIds.length > 1
+              selectedId === null && selectedLocationIds.length > 1
                 ? `these ${selectedLocationIds.length} locations`
                 : "this location"
             }?`}
             onConfirm={
-              selectedLocationIds.length > 0
+              selectedId === null && selectedLocationIds.length > 0
                 ? handleMultiDeleteConfirm
                 : handleSingleDeleteConfirm
             }
