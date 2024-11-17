@@ -157,12 +157,14 @@ const LocationList = () => {
           <ConfirmDialog
             isOpen={isDialogOpen}
             message={`Are you sure you want to delete ${
-              selectedLocationIds.length > 1
-                ? `these ${selectedLocationIds.length} locations`
+              selectedId !== null || selectedLocationIds.length > 1
+                ? `${selectedId !== null ? "this" : "these"} ${
+                    selectedId !== null ? "location" : "locations"
+                  }`
                 : "this location"
             }?`}
             onConfirm={
-              selectedLocationIds.length > 0
+              selectedId !== null || selectedLocationIds.length > 0
                 ? handleMultiDeleteConfirm
                 : handleSingleDeleteConfirm
             }
